@@ -1,0 +1,67 @@
+@import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-size: cover;
+
+
+}
+h2 img
+{
+  width: 150px;
+  height: 150px;
+}
+.table
+{
+	border: 1px;
+}
+.status
+{
+ width: 100%;
+  position: absolute;
+  float: left;
+  left: 15%;
+  top:100px;
+  color: black;
+  font-size:20px;
+}
+
+.BUTTON {
+  background-color: #2E9AFE;
+  border: none;
+  color: white;
+  padding: 5px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  width: 60% ;
+}
+/*
+custom from file */
+.custom-file-input::-webkit-file-upload-button {
+
+}
+.custom-file-input::before {
+  
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
