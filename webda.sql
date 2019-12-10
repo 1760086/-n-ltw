@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2019 at 07:32 PM
+-- Generation Time: Dec 10, 2019 at 12:36 PM
 -- Server version: 10.4.6-MariaDB
 -- PHP Version: 7.3.9
 
@@ -21,6 +21,18 @@ SET time_zone = "+00:00";
 --
 -- Database: `webda`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `friend`
+--
+
+CREATE TABLE `friend` (
+  `idus1` int(10) NOT NULL,
+  `idus2` int(10) NOT NULL,
+  `trangthai` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -68,11 +80,17 @@ CREATE TABLE `usaccount` (
 
 INSERT INTO `usaccount` (`ID`, `HoTen`, `Mail`, `Tell`, `MatKhau`, `NgaySinh`, `GioiTinh`, `urlavatar`) VALUES
 (5, 'Lê Nguyễn Trung Kiên', 'lntkien.17ck1@gmail.com', '0987444606', '$2y$10$9bSkeQ1NgqQ5OpPdKHip7.g.RVOe/HpunSxsk3xQ1esG9hiTHwXE6', '1999-07-03', 'Nam', 'imgAvatar/detective_conan_magic_kaito_kaito_kid_cape_moon_suit_30410_1680x1050.jpg'),
-(6, 'Nguyễn  Nhi', 'nnynhi.17ck1@gmail.com', '0366775442', '$2y$10$Y/Ft/xrfYHEo84b9uhrgKepUO/zPqPxKruVaaFASA6bZl3LK/3QPy', '1999-11-08', 'on', 'imgAvatar/avatar.jpg');
+(7, 'Nguyễn Nhi', 'nnynhi.17ck1@gmail.com', '0366775442', '$2y$10$skAlFFHoU5ROZ.p/BpbseOO.ab0J.2l4FPbhx/vkVm5VmwoM0jX82', '1999-11-08', 'Nam', 'imgAvatar/avatar.jpg');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `friend`
+--
+ALTER TABLE `friend`
+  ADD PRIMARY KEY (`idus1`,`idus2`);
 
 --
 -- Indexes for table `status`
@@ -100,7 +118,7 @@ ALTER TABLE `status`
 -- AUTO_INCREMENT for table `usaccount`
 --
 ALTER TABLE `usaccount`
-  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
