@@ -1,136 +1,224 @@
 
-<?php session_start(); include 'header.php'; ?>
-<html lang="en" dir="ltr">
-  <header>
-      <meta  charset="utf-8">
-      <link rel="stylesheet" type="text/css" href="css/register-form.css">
-
-      <title> WIN </title>
-  </header>
-  <body >
-    <?php 
-    if (!isset($_SESSION['Email'])){
-    ?>
-    <!-- form đăng nhập -->
-    <div class="left" style="left: 15%;">
-      <form action="login_register/login.inc.php" method="POST">
-        <span style="color:#333; font-size:36px; font-family:Helvetica, Arial, sans-serif; font-weight:700;" >Đăng Nhập</span><br><br>
-        <span style="color:#1d2129; font-size:19px; font-family:Helvetica, Arial, sans-serif;">Email hoặc số điện thoại: </span><br>
-        <input class="registration_form" type="text"  name = "mail" ></input><br>
-        <span style="color:#1d2129; font-size:19px; font-family:Helvetica, Arial, sans-serif;">Mật khẩu: </span><br>
-        <input class="registration_form" type="password" name = "matkhau" ></input><br>
-        <input class="submit" type="submit" name="DangNhap" value="Đăng Nhập"></input><br>
-        <a href="forgotPassword.php" style="color:blue; text-decoration:none; position:relative;  top:5px; font-size: 18px;">Quên tài khoản?</a><br>
-        <?php 
-        if (isset($_GET['msglogin'])){ 
-          echo '<a style="color:red; text-decoration:none; position:relative;  top:5px; font-size: 13px;">'.$_GET['msglogin'].'</a>';
-        }?> 
-      </form>
-    </div>
-
-    <!-- form đăng ký -->
-    <div class="right" >
-    <form action="login_register/register.inc.php" method="POST" >
-      <span style="color:#333; font-size:36px; font-family:Helvetica, Arial, sans-serif; font-weight:700;" >Đăng Ký</span><br><br>
-
-      <input class="registration_form" type="text" name="ho" placeholder="Họ"style="width:180px;"></input>
-      <input class="registration_form" type="text" name = "ten" placeholder="Tên" style="width:180px;"></input><br>
-      <input class="registration_form" type="text" name = "mail" placeholder="Email"style="width:397px;"></input><br>
-      <input class="registration_form" type="text" name = "tell" placeholder="Số điện thoại"style="width:397px;"></input><br>
-      <input class="registration_form" type="password" name = "matkhau" placeholder="Mật khẩu"style="width:397px;"></input><br><br>
-
-      <span style="color:#1d2129; font-size:19px; font-family:Helvetica, Arial, sans-serif;">Ngày sinh</span><br><br>
-
-      <select name = "ngay">
-        <option selected disabled>Ngày</option>
-        <?php for ($i = 1; $i <= 31 ; $i++) 
-        { 
-         echo '<option >'.$i.'</option>';
-        } ?>
-      </select>
-
-      <select name = "thang">
-       <option selected disabled>Tháng</option>
-        <?php for ($i = 1; $i <= 12 ; $i++) 
-        { 
-          echo '<option >'.$i.'</option>';
-       } ?>
-      </select>
-
-      <select name = "nam">
-       <option selected disabled>Năm</option>
-       <?php for ($i = 2019; $i >= 1905 ; $i--) 
-         { 
-          echo '<option >'.$i.'</option>';
-        } ?>
-      </select>
-
-      <br><br><span style="color:#1d2129; font-size:19px; font-family:Helvetica, Arial, sans-serif;">Giới tính</span><br>
-
-     <input type="radio" name = "gioitinh" value= "Nam"><label class="gender">Nam</label></input>
-     <input type="radio" name = "gioitinh" valu = "Nữ"><label class="gender">Nữ</label></input>
-     <br><br>
-     <input class="submit" type="submit" name="register" value="Đăng Ký" > </input><br>
-     <?php if (isset($_GET['msg'])) { echo '<a href="#" style="color:#FF0000; text-decoration:none; position:relative;  top:5px; font-size: 18px;">'.$_GET['msg'].'</a>';} ?>
-   </form>
-  </div>
-  
-  <?php } 
-  else { ?>
-
-  <div style="top: 100px">
-    <span style="color:#333; font-size:36px; font-family:Helvetica, Arial, sans-serif; font-weight:700;" >Đăng Ký</span><br><br>
-  </div>
-  <?php
-
-
-    $sql = $db->prepare("SELECT * FROM status ORDER BY  timeSTT DESC");
-    $sql -> execute();
-    $stt= $sql->fetchAll();
-          
-    foreach ($stt as $k )
-    {
-      $st = $k["status"];
-      $tm = $k["timeSTT"];
-      $imgstt = $k["img"];
-      $usid = $k["usID"];
-
-            
-      $selectUrl = $db->prepare("SELECT urlavatar FROM usaccount WHERE ID = ?");
-      $selectUrl -> bindValue(1,$usid,PDO::PARAM_STR );
-      $selectUrl -> execute();
-
-      $urlavatar="";
-      $data = $selectUrl->fetchAll();
-      foreach ($data as $key ) 
-      {
-        $urlavatar = $key["urlavatar"];
-      }
-
-      echo '
-            <br><table style="width:60%;">
-            <tr> 
-            <td ><img src="'.$urlavatar.'" style=" width: 60px; height: 60px;"  border = 2></td>
-            <td style="width:60%px">'.
-            $st
-            .'</td>
-            <td width:200px"> - Ngày đăng: '.
-            $tm
-            .'</td>
-            </tr>';
-      if($imgstt != "non")
-      {
-        echo '<tr>
-              <td></td>
-              <td><img src="'.$imgstt.'" style=" width: 600px; height: auto;"  border = 2></td>
-              <td></td>
-              </tr>';
-      } 
-
-      echo '</table><br><br>';
+<?php 
+  require_once 'init.php';
+  require_once 'functions.php';
+  // Xử lý logic ở đây
+   //kiểm tra có phai là file image hay không   
+  $page = 'index';
+   $postImages = findAllPostById($currentUser['id']);
+   $profile = findProfileById($currentUser['id']);
+   $friends = findAllFriend($currentUser['id']);
+   if(isset($_FILES['uploadsProfile'])&&$profile)
+   {
+        $imageP = $_FILES['uploadsProfile'];
+        $nameImage = $imageP['name'];
+        $sizeImage = $imageP['size'];
+        $tempImage = $imageP['tmp_name'];        
+        $strSql ="UPDATE  profile 
+                  SET profile_cover = '".$nameImage."'
+                  WHERE userid = '".$currentUser['id']."'";
+        $check = uploadImage($nameImage,$sizeImage,$tempImage,$currentUser['email']."/Profile/",$strSql);   
+        resizeImage("Users/".$currentUser['email']."/Profile/".$nameImage,500,500,false,
+                    "Users/".$currentUser['email']."/Profile/".$nameImage);
+       header('Location:index.php');
     }
-  }
-  ?>
 
-</body>
-</html>
+   if(isset($_FILES['uploadsCoverImage'])&&$profile)
+   {
+        $imageC = $_FILES['uploadsCoverImage'];
+        $nameImage = $imageC['name'];
+        $sizeImage = $imageC['size'];
+        $tempImage = $imageC['tmp_name'];
+        $strSql = "UPDATE  profile 
+                   SET header_cover = '".$nameImage."'                   
+                   WHERE userid = '".$currentUser['id']."' ";
+        $check = uploadImage($nameImage,$sizeImage,$tempImage,$currentUser['email']."/Profile/",$strSql);
+        resizeImage("Users/".$currentUser['email']."/Profile/".$nameImage,500,500,false,
+                    "Users/".$currentUser['email']."/Profile/".$nameImage);
+        header('Location:index.php');
+   }
+
+   if(isset($_POST['post'])&&isset($_FILES['fileToUpload']))
+   {
+      $content = $_POST['post'];
+      $image = $_FILES['fileToUpload'];
+      $nameImage = $image['name'];
+      $sizeImage = $image['size'];
+      $tempImage = $image['tmp_name'];
+      $strSql = "INSERT INTO post_images (name_image,content,userid,uploaded_on) VALUES('".$nameImage."','".$content."','".$currentUser['id']."',NOW())";
+      $check = uploadPost($nameImage,$sizeImage,$tempImage,$content,$currentUser['id'],$currentUser['email']."/Uploads/",$strSql);
+      header('Location:index.php');
+  }
+?>
+<?php include 'header.php'; ?>
+  <?php if($currentUser):?>    
+      <div id="middle"  style="bottom: -87px;left: 0px;">
+        <div id="header" class=" shadow-none p-3 mb-5 bg-light rounded border" style="background-image: url(Users/<?php echo $currentUser['email']; ?>/Profile/<?php echo $profile['header_cover']; ?>) !important;">
+             <form action="index.php" method="post" enctype="multipart/form-data" id="frm2" name="frm2">
+                <input type="file"  name="uploadsCoverImage" id="uploadsCoverImage" style="display: none;" onchange="submitForm('frm2')">
+            </form>           
+            <div id="uploadsCover" onclick="document.getElementById('uploadsCoverImage').click();">
+                <img src="icon/camera.png">
+                <span><strong>Cập nhật ảnh bìa</strong></span>
+            </div>    
+            <form action="index.php" method="post" enctype="multipart/form-data" name="frm1" id="frm1">
+                <input type="file"  name="uploadsProfile" id="uploadsProfile" style="display: none;" onchange="submitForm('frm1')">
+            </form>
+
+            <div id="profile_cover" style="background-image: url(Users/<?php echo $currentUser['email']; ?>/Profile/<?php echo $profile['profile_cover']; ?>);">
+            </div>
+            <div  id="selectProfile" onclick="document.getElementById('uploadsProfile').click();">
+                <img src="icon/camera.png">
+                <span><strong>Cập nhật</strong></span>            
+            </div>
+            <div id="user_name" class="position_sector">
+                <p id="name"><?php echo $currentUser['fullname']?></p>
+            </div>
+            <?php if($profile['nickname']!=NULL):?>
+              <div id="nick_name" class="position_sector">(<?php echo $profile['nickname']; ?>)</div>
+            <?php endif;?>
+            
+            <div id="trong" class="option_header background_sector position_sector">
+            </div>
+            <div id="dong_thoi_gian" class="option_header background_sector position_sector">
+                <span>Dòng thời gian</span>
+            </div>
+            <div id="gioi_thieu_layout" class="option_header background_sector position_sector">
+                <span>Giới thiệu</span>
+            </div>
+            <div id="ban_be" class="option_header background_sector position_sector">
+                <span>Bạn bè</span>
+            </div>
+            <div id="anh" class="option_header background_sector position_sector">
+                <span>Ảnh</span>
+            </div>
+            <div id="luu_tru" class="option_header background_sector position_sector">
+                <span>Lưu trữ</span>
+            </div>
+            <div id="xem_them" class="option_header background_sector position_sector">
+                <span>Xem thêm</span>
+            </div>
+        </div>
+        <div id="gioi_thieu" class="background_sector shadow-none p-3 mb-5 bg-light rounded border">
+            <div id="gt_header">
+                <span id="qua_dat" class="glyphicon glyphicon-globe"></span>
+                <span>Giới thiệu</span>
+            </div>
+            <hr style="    position: absolute;left: 20px;top: 45px;width: 290px;">
+            <div id="gt_content" class="mb-0 ">
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-briefcase can_le_icon"></span>
+                    <p>
+                        Sinh viên tại
+                        <a href="https://www.facebook.com/hcmus.edu.vn/?timeline_context_item_type=intro_card_work&timeline_context_item_source=100022266171596&fref=tag&rf=1396475480643432">
+                            <?php echo $profile['university'];?>
+                        </a>
+                    </p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-education can_le_icon"></span>
+                    <p>
+                        Học CĐ Công Nghệ Thông Tin
+                        <a href="https://www.facebook.com/hcmus.edu.vn/?timeline_context_item_type=intro_card_work&timeline_context_item_source=100022266171596&fref=tag&rf=1396475480643432">
+                            Đại học Khoa học Tự nhiên
+                        </a>
+                    </p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-education can_le_icon"></span>
+                    <p>
+                        Đã học tại
+                        <a href="https://www.facebook.com/pages/Le-Minh-Xuan-high-school-Saigon-Vietnam/1424209467798778?timeline_context_item_type=intro_card_education&timeline_context_item_source=100022266171596&fref=tag">
+                            <?php echo $profile['highschool'];?>
+                        </a>
+                    </p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-envelope can_le_icon"></span>
+                    <p>
+                        Email
+                        <a href="https://accounts.google.com/signin/v2/identifier?passive=1209600&osid=1&continue=https%3A%2F%2Fcontacts.google.com%2F&followup=https%3A%2F%2Fcontacts.google.com%2F&flowName=GlifWebSignIn&flowEntry=ServiceLogin">
+                            <?php echo $currentUser['email'];?>
+
+                        </a>
+                    </p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-baby-formula can_le_icon"></span>
+                    <p>Ngày sinh <a><?php echo $profile['birthday'];?></a></p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-map-marker can_le_icon"></span>
+                    <p>Đến từ <a><?php echo $profile['placeofbirth'];?></a></p>
+                </div>
+                <div class="gt_format">
+                    <span class="glyphicon glyphicon-home can_le_icon"></span>
+                    <p>Sống tại <a><?php echo $profile['currentresidence'];?></a></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="lien_lac" class="background_sector alert alert-dark shadow-none p-3 mb-5 bg-light rounded border ">
+            <p id="lh_header" class="lien_he list-group-item list-group-item-action active ">Yêu thích</p>
+            <?php foreach($friends as $fr):?>
+            <p class="lien_he ">
+                <a href="http://localhost:8888/MangXaHoi/Users/<?php echo $fr['email']?>/?ID=<?php echo $currentUser['id'];?> " class="list-group-item list-group-item-action" target="_blank" onclick="">
+                    <?php echo $fr['fullname'];?>
+                </a>
+            </p>
+          <?php endforeach;?>
+        </div>
+        <div id="ds_mon_hoc" class="shadow-none p-3 mb-5 bg-light rounded border">
+        
+        <div>
+         <form action="index.php" method="post" enctype="multipart/form-data" name="frm3">
+            <input type="file"  name="fileToUpload" id="fileToUpload" style="display: none;">
+            <div id="sharePost">
+                <div id="selectImage" onclick="document.getElementById('fileToUpload').click();">
+                    <span>Ảnh</span>
+                    <img src="./icon/picture.png"style="height: 25px;width: 25px;">
+                </div>
+                <textarea  placeholder="Bạn đang nghĩ gì vậy <?php echo $currentUser['fullname'];?> ?" rows = "6" cols = "50" style="overflow: hidden;" name="post" id="textbox"></textarea>
+                <div id="submitShare">
+                    <input  style = "width: 75px;"type="submit" value="Share" name="submit" class="btn btn-primary">
+                </div>
+            </div>
+         </form>
+         </div>
+            <?php foreach($postImages as $image):?>
+                <?php if($image['content']!=NULL&&$image['name_image']!=NULL):?>
+                    <div id="post" class="dsmh_mon_hoc" style="line-height:8px;margin: 15px 15px;">
+                      
+                      <p><strong id="nameUser"><?php echo $currentUser['fullname'];?></strong></p>
+                      <p id="timeUpload" class="ten_truong glyphicon glyphicon-briefcase can_le_icon"><?php echo $image['uploaded_on'];?></p>
+                      <p style="top: 76px;" class="dsmh_detail"><?php echo $image['content'];?></p>
+                      <img id="imageShow"src="Users/<?php echo $currentUser['email']; ?>/Uploads/<?php echo $image['name_image']; ?>">
+                    </div>
+                <?php else: ?>
+                  <?php if($image['name_image']==NULL&&$image['content']!=NULL): ?>
+                    <div class="dsmh_mon_hoc" style="line-height:15px;margin: 15px 15px;height: auto;">
+                      <p><strong style="    color: hsla(240, 100%, 27%,0.5);position: relative;left: 15px;top: 10px;"><?php echo $currentUser['fullname'];?></strong></p><br/>
+                      <p class="ten_truong glyphicon glyphicon-briefcase can_le_icon"><?php echo $image['uploaded_on'];?></p><br/>
+                      <div style="width: inherit;">
+                      <p style="position:relative;left:0px;top:0px;" class="dsmh_detail"><?php echo $image['content'];?></p>
+                    </div>
+                    </div>
+                    <?php else:?>
+                      <div id="post" class="dsmh_mon_hoc" style="line-height:8px;margin: 15px 15px;">
+                        <p><strong id="nameUser"><?php echo $currentUser['fullname'];?></strong></p>
+                        <p id="timeUpload" class="ten_truong glyphicon glyphicon-briefcase can_le_icon"><?php echo $image['uploaded_on'];?></p>
+                        <img id="imageShow"src="Users/<?php echo $currentUser['email'];?>/Uploads/<?php echo $image['name_image'];?>">
+                      </div>
+                    <?php endif;?>      
+                <?php endif;?>
+              <?php endforeach;?>
+              </div>
+              </div> 
+      <?php else: ?>
+        <p  style = "position: absolute;top: 90px;">
+      Chào mừng bạn đến với mạng xã hội ... 
+     </p>
+     <?php    endif; ?>
+       <script type="text/javascript">
+       </script>
+<?php include 'footer.php'; ?>

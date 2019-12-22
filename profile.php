@@ -1,116 +1,68 @@
-<?php session_start(); include 'header.php'; 
-if (!isset($_SESSION['Email']) || !isset($_GET['idus'])){ 
-	header("Location: index.php");
-}
-else
+<?php 
+require_once 'init.php';
+require_once 'functions.php';
+  // Xử lý logic ở đây
+$page = 'profile';
+
+$success = false;
+if(isset($_POST['university'])&&isset($_POST['majors'])&&
+   isset($_POST['highschool'])&&isset($_POST['birthday'])&&
+   isset($_POST['placeofbirth'])&&isset($_POST['currentresidence'])&&
+   isset($_POST['nickname']))
 {
-	  include("Connect/conn.php");
-
-    $ID = $_GET['idus'];
-    $Mail = $_SESSION['Email'];
-
-    $sql = $db->prepare("SELECT ID FROM usaccount WHERE Mail = ? or Tell = ?");
-    $sql -> bindValue(1,$Mail,PDO::PARAM_STR );
-    $sql -> bindValue(2,$Mail ,PDO::PARAM_STR );
-    $sql -> execute();
-    $idus =0;
-    $data = $sql->fetchAll();
-    foreach ($data as $key ) 
-    {
-        $idus = $key["ID"];
-    }
-
-    if($idus == $ID)
-    {
-      header("Location: mypage.php");
-    }
-
-    $sql = $db->prepare("SELECT HoTen,urlavatar FROM usaccount WHERE ID = ?");
-    $sql -> bindValue(1,$ID ,PDO::PARAM_STR );
-   	$sql -> execute();
-	  $name = "";
-    $urlavatar = "";
-    $data = $sql->fetchAll();
-    foreach ($data as $key ) 
-    {
-        $name = $key["HoTen"];
-        $urlavatar = $key["urlavatar"];
-    }
-
-
+	$university = $_POST['university'];
+	$highschool = $_POST['highschool'];
+	$majors = $_POST['highschool'];
+	$birthday = $_POST['birthday'];
+	$placeofbirth = $_POST['placeofbirth'];
+	$currentresidence = $_POST['currentresidence'];
+	$nickname = $_POST['nickname'];
+	$strSql = "INSERT INTO profile(university,majors,highschool,birthday,placeofbirth,currentresidence,userid,nickname,uploaded_on)
+			   VALUES('".$university."','".$majors."','".$highschool."','".$birthday."','".$placeofbirth."','".$currentresidence."','".$currentUser['id']."','".$nickname."',NOW())";
+	$success = updateProfile($strSql);
+	if($success)
+	{
+		header('Location: index.php');
+		exit();
+	}
+}	
 ?>
-<html lang="en" dir="ltr">
-  <header>
-      <meta  charset="utf-8">
-      <link rel="stylesheet" type="text/css" href="css/mypage.css">
-      <title> WIN </title>
-  </header>
-  <body>
-  	<div class="status" >
-  		<div style="border: 2px solid black; width: 1150px; height: 350px; background-image: url(imgBackgroud/bia001.jpg); background-size: 1150px auto;">
-  		<table >
-  		<div style="margin-top: 190px;">
-  			<tr>
-   			<td style="padding: 5px;">
-   			<?php echo' <h2><img src="'.$urlavatar.'" align="center" ></h2>'?>
-   			</td>
-      		<td style="padding: 5px;">
-      			<?php echo '<h1>'.$name.'</h1>'; ?>
 
-      			<form action="#" method="post" enctype="multipart/form-data">
-       			<input type="submit" name="ketban" value="Kết Bạn">
-
-    			</form>
-      		</td>
-   		</tr>
-  		</div>
-   		
-   		</table>
-   		</div>
-   		<br>
-
-
-
-    <!-- Hiển thị status -->
-	<?php
-		
-        $sql = $db->prepare("SELECT * FROM status WHERE usID = ? ORDER BY  timeSTT DESC");
-        $sql -> bindValue(1,$ID,PDO::PARAM_INT );
-        $sql -> execute();
-        $stt= $sql->fetchAll();
-        	
-        foreach ($stt as $k )
-        {
-        	$st = $k["status"];
-        	$tm = $k["timeSTT"];
-        	$imgstt = $k["img"];
-        	echo '<br><table style="width:60%;">
-        			<tr> 
-        				<td ><img src="'.$urlavatar.'" style=" width: 60px; height: 60px;"  border = 2></td>
-        				<td style="width:60%px">'.
-        				$st
-        				.'</td>
-        				<td width:200px"> - Ngày đăng: '.
-        				$tm
-        				.'</td>
-        			</tr>';
-        	if($imgstt != "non")
-        	{
-        		echo '<tr>
-        				<td></td>
-        				<td><img src="'.$imgstt.'" style=" width: 600px; height: auto;"  border = 2></td>
-        				<td></td>
-        			  </tr>';
-        	}	
-
-        	echo '
-        		 </table><br><br>';
-        		         	
-        }
-      
-    }
-
-	?>
-    </div>
-  </body>
-</html>
+<?php include 'header.php'; ?>
+<div class="user">
+<h2 class="user_title">Cập nhật thông tin cá nhân</h2>
+<?php if(!$success):?>
+	<form action="profile.php" method="post">
+		<div class="form-group">
+			<label for="university">Bạn học trường nào?</label>
+			<input type="text" class="form-control" id="university" name="university">
+		</div>
+		<div class="form-group">
+			<label for="majors">Nghành của bạn là gì</label>
+			<input type="text" class="form-control" id="majors" name="majors">
+		</div>
+		<div class="form-group">
+			<label for="highschool">Trường trung học bạn đã từng học là trường nào?</label>
+			<input type="text" class="form-control" id="highschool" name ="highschool">
+		</div>
+		<div class="form-group">
+			<label for="birthday">Ngày sinh của bạn?</label>
+			<input type="date" class="form-control" id="birthday" name="birthday" >		
+		</div>
+		<div class="form-group">
+			<label for="placeofbirth">Bạn đến từ đâu?</label>
+			<input type="text" class="form-control" id="placeofbirth" name ="placeofbirth">	
+		</div>
+		<div class="form-group">
+			<label for="currentresidence">Hiện tại bạn đang sinh sống ở đâu?</label>
+			<input type="text" class="form-control" id="currentresidence" name ="currentresidence">	
+		</div>
+		<div class="form-group">
+			<label for="nickname">Nick name của bạn là gì?</label>
+			<input type="text" class="form-control" id="nickname" name ="nickname">	
+		</div>
+		<input type="submit" class="btn btn-primary">Cập nhật</input>
+	</form>
+<?php endif;?>
+</div>
+<?php include 'footer.php'; ?>
