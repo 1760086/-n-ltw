@@ -64,17 +64,6 @@
 						<a class="nav-link" href="regist.php">Đăng kí</a>
 					</li>
 					<?php else:?>
-					<li class="nav-item ">
-						<a class="nav-link" href="change_pass.php">Đổi mật khẩu</a>
-					</li>
-
-					<li class="nav-item ">
-						<a class="nav-link" href="logout.php">Đăng xuất</a>
-					</li>
-					<li class="nav-item ">
-						<a class="nav-link" href="requests_friend.php">Yêu cầu kết bạn</a>
-					</li>
-					<?php endif; ?>
 					<li class="nav-item header_button <?php echo $page === 'index'? 'active':''?>">
 						<a class="nav-link" href="<?php echo $page == 'index' && $currentUser ? 'home.php':'index.php'?>">
 							<?php
@@ -92,6 +81,32 @@
 							?>
 						</a>
 					</li>
+					<li class="nav-item ">
+						<a class="nav-link" href="change_pass.php">Đổi mật khẩu</a>
+					</li>
+					<li class="nav-item ">
+						<?php
+						 $sl = isRequestFriend($currentUser['id']) ;
+						 if($sl == 1)
+						 {
+						 	echo '<a class="nav-link" href="requests_friend.php" >Bạn bè <i class="fas fa-bell" style="font-size: 15px; color: red;"></i></a>';
+						 }
+						 else
+						 {
+						 	echo '<a class="nav-link" href="requests_friend.php" >Bạn bè </a>';
+						 }
+						?>
+						
+					</li>
+
+					<li class="nav-item ">
+						<a class="nav-link" href="logout.php">Đăng xuất</a>
+					</li>
+					
+					
+					
+					<?php endif; ?>
+					
 				</ul>
 			</div>
 		</nav>

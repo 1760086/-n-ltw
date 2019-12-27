@@ -1,3 +1,4 @@
+@import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
 .user
 {
     width: 450px;
@@ -45,7 +46,6 @@
     position:  relative;
     left: 15PX;
     bottom: -63PX;
-    
 }
 #textbox{
     width: inherit;
@@ -80,5 +80,5 @@
 {
     position: relative;
     left: 15px;
-    bottom: -15px;
+    bottom: -10px;
 }

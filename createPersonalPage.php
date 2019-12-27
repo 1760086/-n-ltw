@@ -341,8 +341,8 @@
 <?php include "header.php"; ?>
   <?php if($personalID):?>    
       <div id="middle"  style="bottom: -87px;left: 0px;">
-        <div id="header" class=" shadow-none p-3 mb-5 bg-light rounded border" style="background-image: url(/Profile/<?php echo $profile["header_cover"]; ?>) !important;">
-            <div id="profile_cover" style="background-image: url(/Profile/<?php echo $profile["profile_cover"]; ?>);">
+        <div id="header" class=" shadow-none p-3 mb-5 bg-light rounded border" style="background-image: url(Profile/<?php echo $profile["header_cover"]; ?>) !important;">
+            <div id="profile_cover" style="background-image: url(Profile/<?php echo $profile["profile_cover"]; ?>);">
             </div>
             <div id="user_name" class="position_sector">
                 <p id="name"><?php echo $personalID["fullname"]?></p>
@@ -455,7 +455,7 @@
             <p id="lh_header" class="lien_he list-group-item list-group-item-action active ">Yêu thích</p>
             <?php foreach($friends as $fr):?>
             <p class="lien_he ">
-                <a href="http://localhost:8888/MangXaHoi/Users/<?php echo $fr[\'email\']?>/?ID=<?php echo $currentUser[\'id\'];?> " class="list-group-item list-group-item-action" target="_blank" onclick="">
+                <a href="Users/<?php echo $fr[\'email\']?>/?ID=<?php echo $currentUser[\'id\'];?> " class="list-group-item list-group-item-action" target="_blank" onclick="">
                     <?php echo $fr[\'fullname\'];?>
                 </a>
             </p>
@@ -619,7 +619,7 @@ body{
     top: 294px;
     border-bottom-left-radius: 75px;
     border-bottom-right-radius: 75px;
-    background-color: rgba(255, 255, 255,0.5);
+    background-color: white;
     display: none;
     position: absolute;
 }
@@ -680,17 +680,17 @@ body{
 #user_name {
     left: 205px;
     bottom: 50px;
-    color: rgb(115, 115, 115);
-    font-family: \'Pacifico\', cursive;
+    color: white;
+    font-family: inherit;
     font-size: 30px;
 }
 #nick_name {
-    left: 368px;
+    left: 205px;
     bottom: 8px;
     color: white;
-    font-family: \'Pacifico\', cursive;
+    font-family: inherit;
     font-size: 25px;
-    color: rgb(115, 115, 115);
+    color: white;
 }
 #name {
     margin-top: 0px;

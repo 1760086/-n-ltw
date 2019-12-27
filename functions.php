@@ -37,12 +37,32 @@
       global $db;
       $stmt = $db->prepare("SELECT *
                             FROM request_friend
-                            LEFT JOIN users ON   users.id  =request_friend.sent_userid
+                            LEFT JOIN users ON   users.id  = request_friend.sent_userid
                             WHERE request_friend.received_userid = ? AND
                             request_friend.accepted = 0");
       $stmt->execute(array($userid));
       $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
       return $requests;
+    }
+    function isRequestFriend($userid)
+    {
+      global $db;
+      $stmt = $db->prepare("SELECT *
+                            FROM request_friend
+                            LEFT JOIN users ON   users.id  =request_friend.sent_userid
+                            WHERE request_friend.received_userid = ? AND
+                            request_friend.accepted = 0");
+      $stmt->execute(array($userid));
+      $row_count = $stmt->rowCount();
+      if($row_count > 0)
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+      
     }
     function copyFile($srcPath,$destPath)
     {
@@ -112,22 +132,35 @@
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
       return $user;
    }
-   function findAllPostById($userid)
+   function sumPostById($userid)
+   {
+   	global $db;
+    $stmt = $db->prepare("SELECT *
+                         FROM post_images
+                         WHERE post_images.userid = ?
+                         ORDER BY post_images.uploaded_on DESC");
+    $stmt->execute(array($userid));
+    $row_count = $stmt->rowCount();
+    return $row_count/5;
+   }
+   function findAllPostById($userid,$page)
    {
       global $db;
+      $start = ($page - 1)*5;
+      $stop = $page *5;
       $stmt = $db->prepare("SELECT *
                             FROM post_images
                             WHERE post_images.userid = ?
-                            ORDER BY post_images.uploaded_on DESC");
+                            ORDER BY post_images.uploaded_on DESC  LIMIT $start,$stop");
       $stmt->execute(array($userid));
       $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
       return $posts;
    }
-   function findAllPost($userid)
+
+   function sumPost($userid)
    {
-      global $db;
-      $stmt = $db->prepare("SELECT DISTINCT post_images.name_image,post_images.userid,post_images.uploaded_on,
-                                            users.fullname,post_images.content,users.email
+    global $db;
+    $stmt = $db->prepare("SELECT DISTINCT *
                             FROM post_images
                             LEFT JOIN (SELECT friend_list.friendid,friend_list.userid 
                                        FROM friend_list 
@@ -139,6 +172,28 @@
                             WHERE post_images.userid = ? OR 
                                  B.userid = ?
                             ORDER BY post_images.uploaded_on DESC");
+    $stmt->execute(array($userid,$userid));
+    $row_count = $stmt->rowCount();
+    return $row_count/5;
+   }
+   function findAllPost($userid,$page)
+   {
+      global $db;
+      $start = ($page - 1)*5;
+      $stop = $page *5;
+      $stmt = $db->prepare("SELECT DISTINCT post_images.id,post_images.name_image,post_images.userid,post_images.uploaded_on,
+                                            users.fullname,post_images.content,users.email
+                            FROM post_images
+                            LEFT JOIN (SELECT friend_list.friendid,friend_list.userid 
+                                       FROM friend_list 
+                                       UNION 
+                                       SELECT request_friend.sent_userid,request_friend.received_userid 
+                                       FROM request_friend
+                                       WHERE request_friend.accepted = 1) AS B ON B.friendid = post_images.userid
+                            LEFT JOIN users ON users.id = post_images.userid
+                            WHERE post_images.userid = ? OR 
+                                 B.userid = ?
+                            ORDER BY post_images.uploaded_on DESC LIMIT $start,$stop");
       $stmt->execute(array($userid,$userid));
       $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
       return $posts;
@@ -335,6 +390,69 @@
         return $currPath;
     
    }
+   function insertComment($postID,$comment)
+   {
+      global $db;
+      $strQuery = "INSERT INTO commentpost(postID,comment,commentTime) VALUES ('".$postID."','".$comment."',NOW())";
+      $stmt = $db ->query($strQuery);
+      return ;
+   }
+
+   function GetCommentByID($postID)
+   {
+      global $db;
+      $stmt = $db->prepare("SELECT *
+                       FROM commentpost
+                       WHERE commentpost.postID = ?");
+      
+      $stmt->execute(array($postID));
+      $commentPost = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $commentPost;
+   }
+
+   function likePost($postID,$userid)
+   {
+      global $db;
+      $strQuery = "INSERT INTO postlike(postID,userID) VALUES ('".$postID."','".$userid."')";
+      $stmt = $db ->query($strQuery);
+      return ;
+   }
+   function unlike($postID,$userid)
+   {
+      global $db;
+      $strQuery = "DELETE FROM postlike WHERE postID = '".$postID."' &&  $userid = '".$userid."'";
+      $stmt = $db ->query($strQuery);
+      return ;
+   }
+   function isLike($postID,$userid)
+   {
+
+      global $db;
+      $stmt = $db->prepare("SELECT *
+                       FROM postlike
+                       WHERE postlike.postID = ? && postlike.userid = ?");
+      
+      $stmt->execute(array($postID,$userid));
+
+      $likePost = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      foreach ($likePost as $key ) {
+        if($postID == $key['postID'] && $userid == $key['userID'])
+        {
+          return 1;
+        }
+      }
+      return 0;
+   }
+   function sumLike($postID)
+   {
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM postlike WHERE postlike.postID = ?");
+    $stmt->execute(array($postID));
+    $row_count = $stmt->rowCount();
+    return $row_count;
+   }
+
    function sentEmail($email,$receiver,$subject,$content)
    {
       $mail = new PHPMailer(true);                              // Passing `true` enables exceptions

@@ -1,3 +1,4 @@
+@import "https://use.fontawesome.com/releases/v5.5.0/css/all.css";
 *{
     border-radius:3px;
 }
@@ -35,6 +36,7 @@ body{
     position: relative;
     left: 6px;
     bottom: -40px;
+    
 }
 #profile_cover {
     width: 18%;
@@ -74,17 +76,17 @@ body{
 #user_name {
     left: 205px;
     bottom: 50px;
-    color: rgb(115, 115, 115);
-    font-family: 'Pacifico', cursive;
+    color: white;
+    font-family: inherit;
     font-size: 30px;
 }
 #nick_name {
-    left: 368px;
-    bottom: 8px;
+    left: 205px;
+    bottom: 20px;
     color: white;
-    font-family: 'Pacifico', cursive;
+    font-family: inherit;
     font-size: 25px;
-    color: rgb(115, 115, 115);
+    color: white;
 }
 #name {
     margin-top: 0px;
@@ -112,10 +114,12 @@ body{
 #lien_lac {
     position: fixed;
     width: 252px;
-    height: 545px;
-    left: 970px;
+    height: 70%;
+    float: right;
+    right: 60px;
     bottom: -44px;
-    overflow-y: scroll; 
+    overflow-y: scroll;
+    z-index: 4;
 }
 #trong {
     width: 200px;
@@ -207,7 +211,7 @@ body{
     width: 530px;
     left: 315px;
     height: 250px;
-    bottom: -62px;
+    top:400px;
     font-size: 16px;
     background-color :rgba(204, 204, 204,0.4); 
 }
@@ -224,7 +228,7 @@ body{
 }
 .dsmh_mon_hoc {
     width: 527px;
-    height: 620px;
+    height: 745px;
     position: relative;
     background-color: white;
     right: 30px;

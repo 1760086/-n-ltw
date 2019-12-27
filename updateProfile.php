@@ -5,6 +5,12 @@ require_once 'functions.php';
 $page = 'profile';
 
 $success = false;
+if(!isset($_POST['UpdatePro']))
+{
+	header('Location: index.php');
+}
+if(isset($_POST['CapNhat']))
+{
 if(isset($_POST['university'])&&isset($_POST['majors'])&&
    isset($_POST['highschool'])&&isset($_POST['birthday'])&&
    isset($_POST['placeofbirth'])&&isset($_POST['currentresidence'])&&
@@ -17,8 +23,11 @@ if(isset($_POST['university'])&&isset($_POST['majors'])&&
 	$placeofbirth = $_POST['placeofbirth'];
 	$currentresidence = $_POST['currentresidence'];
 	$nickname = $_POST['nickname'];
-	$strSql = "INSERT INTO profile(university,majors,highschool,birthday,placeofbirth,currentresidence,userid,nickname,uploaded_on)
-			   VALUES('".$university."','".$majors."','".$highschool."','".$birthday."','".$placeofbirth."','".$currentresidence."','".$currentUser['id']."','".$nickname."',NOW())";
+
+	$strSql = "UPDATE profile SET university = '".$university."', majors = '".$majors."',highschool = '".$highschool."',birthday = '".$birthday."',placeofbirth = '".$placeofbirth."',currentresidence = '".$currentresidence."',nickname = '".$nickname."',uploaded_on = NOW() WHERE userid = '".$currentUser['id']."'";
+
+
+
 	$success = updateProfile($strSql);
 	if($success)
 	{
@@ -26,13 +35,14 @@ if(isset($_POST['university'])&&isset($_POST['majors'])&&
 		exit();
 	}
 }	
+}
 ?>
 
 <?php include 'header.php'; ?>
 <div class="user">
 <h2 class="user_title">Cập nhật thông tin cá nhân</h2>
 <?php if(!$success):?>
-	<form action="profile.php" method="post">
+	<form action="#" method="post">
 		<div class="form-group">
 			<label for="university">Bạn học trường nào?</label>
 			<input type="text" class="form-control" id="university" name="university">
@@ -61,7 +71,7 @@ if(isset($_POST['university'])&&isset($_POST['majors'])&&
 			<label for="nickname">Nick name của bạn là gì?</label>
 			<input type="text" class="form-control" id="nickname" name ="nickname">	
 		</div>
-		<input type="submit" class="btn btn-primary" value="Lưu"></input>
+		<input type="submit" name="CapNhat" class="btn btn-primary" value="Cập Nhật"></input>
 	</form>
 <?php endif;?>
 </div>
